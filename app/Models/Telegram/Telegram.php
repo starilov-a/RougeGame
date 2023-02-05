@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Log;
 
 class Telegram
 {
-    private $webhook = 'https://api.telegram.org/bot5558278236:AAHI-LWRav9eV33TX1As37Fq34hXSq5zlRI/setWebhook?url=https://b6a3-5-149-159-46.eu.ngrok.io/webhook';
+    private $webhook = 'https://api.telegram.org/bot5558278236:AAHI-LWRav9eV33TX1As37Fq34hXSq5zlRI/setWebhook?url=https://e6ea-5-149-159-46.eu.ngrok.io/webhook';
     private $url = 'https://api.telegram.org/bot';
     private $apikey;
     private $http;

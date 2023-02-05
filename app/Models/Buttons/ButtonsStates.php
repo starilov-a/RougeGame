@@ -15,4 +15,6 @@ abstract class ButtonsStates
     }
 
     abstract public function getMenu($data);
+
+    abstract public function returnMenu();
 }

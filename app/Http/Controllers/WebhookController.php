@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Telegram\Telegram;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use function Psy\debug;
 
 class WebhookController extends Controller
 {

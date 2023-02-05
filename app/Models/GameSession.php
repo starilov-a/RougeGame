@@ -14,7 +14,7 @@ class GameSession extends Model
     public function loadSession($userId) {
         $gameInfo = unserialize(json_decode($this->where('userId', $userId)->first()->gameInfo));
         throw_if(empty($gameInfo), NoUserExeption::class);
-        return ;
+        return $gameInfo;
     }
 
     public function saveSession($userId, $gameInfo) {

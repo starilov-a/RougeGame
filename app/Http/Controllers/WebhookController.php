@@ -9,12 +9,12 @@ use Illuminate\Support\Facades\Log;
 class WebhookController extends Controller
 {
     public function index(Request $request, GameController $gameController, Telegram $telegram) {
-        $content = $request->getContent();
+        
         //response('Hello World', 200);exit;
-        $json = json_decode($content);
-
-
+        $json = json_decode($request->getContent());
+        
         $userMessage = '';
+        $userId = '';
         if (isset($json->message)) {
             $userId = $json->message->from->id;
             $userMessage = $json->message->text;
@@ -23,15 +23,10 @@ class WebhookController extends Controller
         $gameController->setMessage($userMessage);
         $gameController->setUserId($userId);
 
-
-
         //получение кнопок
-        $message = '';
-        if(isset($gameController->commands[$userMessage])) {
-            list($message, $messageBtn) = $gameController->staticAction();
-        } else {
-            list($message, $messageBtn) = $gameController->customAction();
-        }
+        list($message, $messageBtn) = isset($gameController->commands[$userMessage]) 
+            ? $gameController->staticAction()
+            : $gameController->customAction();
 
         $telegram->sendMessage($userId, $message, $messageBtn);
     }

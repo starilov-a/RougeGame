@@ -25,7 +25,8 @@ class GameController extends Controller
         'Атаковать',
         'Говорить',
         'Инвентарь',
-        'Исследовать' => 'checkMap'//Временно
+        'Исследовать' => 'checkMap',//Временно
+        'Назад' => 'menuReturn'
     ];
 
     public function __construct(GameSession $gameSession, GameButtons $gameButtons){
@@ -93,6 +94,14 @@ class GameController extends Controller
         $fromRoom = $this->map->getFloor($this->player->getLvl())->getRoom($this->player);
         //движение в указанную комнату и получение ответа
         $message = $this->player->goRoom($fromRoom, $toRoom);
+        $messageBtn = $this->gameButtons->getMenu(new $this->gameButtons->buttonsState($this->gameButtons));
+
+        return [$message, $messageBtn];
+    }
+
+    protected function menuReturn() {
+        //Возрат состояния кнопок
+        $message = 'Нажал назад';
         $messageBtn = $this->gameButtons->getMenu(new $this->gameButtons->buttonsState($this->gameButtons));
 
         return [$message, $messageBtn];

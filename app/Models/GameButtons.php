@@ -10,6 +10,9 @@ class GameButtons
     protected $message = '';
 
     public function getMenu($buttonsState, $data = false) {
+        if ($this->message == 'Назад') {
+            return $buttonsState->returnMenu();
+        }
         return $buttonsState->getMenu($data);
     }
 

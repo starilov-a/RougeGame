@@ -13,8 +13,8 @@ class ActionButtons extends ButtonsStates
         'Инвентарь' => 'inventoryMenu',
         'Исследовать' => ['state' => 'ActionButtons', 'method' => 'mainMenu']
     ];
-    public function getMenu($data) {
 
+    public function getMenu($data) {
         $message = $this->gameButtons->getMessage();
         //1.передача состояния
         $this->gameButtons->switchButtonsState($this->nextState[$message]['state']);
@@ -26,5 +26,12 @@ class ActionButtons extends ButtonsStates
         } else {
             return $this->buttons->$methodName();
         }
+    }
+
+    public function returnMenu() {
+        //1.передача состояния
+        $this->gameButtons->switchButtonsState('ActionButtons');
+        //2.получение кнопок
+        return $this->buttons->mainMenu();
     }
 }

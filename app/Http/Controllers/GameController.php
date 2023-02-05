@@ -2,135 +2,77 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\GeneralTelegramExeption;
 use App\Models\Entitys\Player;
+use App\Models\PlayerAction,
+    App\Models\GameActions;
 use App\Models\GameButtons,
-    App\Models\GameSession,
-    App\Models\Buttons\ActionButtons,
-    App\Models\Generators\CaseGenerator;
+    App\Models\Generators\CaseGenerator,
+    App\Models\User;
 use App\Models\Map\Map;
 use Illuminate\Support\Facades\Log;
 
 class GameController extends Controller
 {
-    protected $userId;
-    protected $gameSession;
-    protected $gameButtons;
+    protected $user;
+    public $gameButtons;
 
     public Player $player;
     public Map $map;
 
     public $commands = [
-        '/start' => 'newGame',
-        'Идти' => 'menuGoRoom',
+        '/start',
+        'Идти',
         'Атаковать',
         'Говорить',
         'Инвентарь',
-        'Исследовать' => 'checkMap',//Временно
-        'Назад' => 'menuReturn'
+        'Исследовать',
+        'Назад',
     ];
 
-    public function __construct(GameSession $gameSession, GameButtons $gameButtons){
-        $this->gameSession = $gameSession;
+    public function __construct(GameButtons $gameButtons, User $user){
         $this->gameButtons = $gameButtons;
+        $this->user = $user;
     }
 
-    public function setUserId($userId) {
-        $this->userId = $userId;
-    }
-
-    public function setMessage($message) {
-        $this->gameButtons->setMessage($message);
-    }
-
-    public function staticAction() {
-
-        if ($this->gameButtons->getMessage() != '/start')
-            $this->loadGame();
-
-        $methodName = $this->commands[$this->gameButtons->getMessage()];
-        $messageResponse = $this->$methodName();
-        $this->saveGame();
-
-        return $messageResponse;
-    }
-
-    public function customAction() {
-        $this->loadGame();
-        switch ($this->gameButtons->buttonsState) {
-            case('App\Models\Buttons\MoveButtons'):
-                $messageResponse = $this->goRoom();
-                break;
-            default:
-                $messageResponse = 'Error';
+    public function staticCommand() {
+        //Исключениее для новой игры
+        //TODO найти другое решение
+        if ($this->user->message == '/start') {
+            $this->createGame();
+            $message = 'Создана новая игра!';
+            $messageBtn = $this->gameButtons->getMenu(new $this->gameButtons->buttonsState($this->gameButtons, $this));
+            return [$message, $messageBtn];
         }
+
+        $this->loadGame();
+
+        //TODO добавить функционал сообщений для кнопок
+        $message = 'Клик!';
+        $messageBtn = $this->gameButtons->getMenu(new $this->gameButtons->buttonsState($this->gameButtons, $this));
+
         $this->saveGame();
 
-        return $messageResponse;
-    }
-
-    protected function newGame() {
-        //Создание игровой сессии
-        $generator = new CaseGenerator();
-        $this->map = $generator->map->generate();
-        $this->player = $generator->player->generate();
-
-        $message = 'Игра Создана!';
-        $messageBtn = $this->gameButtons->getMenu(new ActionButtons($this->gameButtons));
-
         return [$message, $messageBtn];
     }
 
-    protected function menuGoRoom() {
+    public function customCommand() {
+        //срабатывает при клике на рандомное значение
+        $this->loadGame();
+        $playerActions = new PlayerAction($this);
 
-        $rooms = $this->map->getFloor($this->player->getLvl())->getNearRoom($this->player);
+        $method = $this->gameButtons->buttonsState::$action;
 
-        $message = 'Хмм, куда бы пойти?';
-        $messageBtn = $this->gameButtons->getMenu(new $this->gameButtons->buttonsState($this->gameButtons), $rooms);
+        $message = $playerActions->$method();
+        $messageBtn = $this->gameButtons->getMenu(new $this->gameButtons->buttonsState($this->gameButtons, $this));
 
-        return [$message, $messageBtn];
-    }
-
-    protected function menuSearch() {
-        //Получение нужных комнат
-        $toRoom = $this->map->getFloor($this->player->getLvl())->getRoomByTitle($this->gameButtons->getMessage());
-        $fromRoom = $this->map->getFloor($this->player->getLvl())->getRoom($this->player);
-        //движение в указанную комнату и получение ответа
-        $message = $this->player->goRoom($fromRoom, $toRoom);
-        $messageBtn = $this->gameButtons->getMenu(new $this->gameButtons->buttonsState($this->gameButtons));
-
-        return [$message, $messageBtn];
-    }
-
-    protected function menuReturn() {
-        //Возрат состояния кнопок
-        $message = 'Нажал назад';
-        $messageBtn = $this->gameButtons->getMenu(new $this->gameButtons->buttonsState($this->gameButtons));
-
-        return [$message, $messageBtn];
-    }
-
-    protected function checkMap() {
-        $message = "Вы раскрыли карту\r\n\r\n";
-        $message .= $this->map->getView();
-
-        $messageBtn = $this->gameButtons->getMenu(new $this->gameButtons->buttonsState($this->gameButtons));
-
-        return [$message, $messageBtn];
-    }
-
-    protected function goRoom() {
-        //Получение нужных комнат
-        $toRoom = $this->map->getFloor($this->player->getLvl())->getRoomByTitle($this->gameButtons->getMessage());
-        $fromRoom = $this->map->getFloor($this->player->getLvl())->getRoom($this->player);
-        //движение в указанную комнату и получение ответа
-        $message = $this->player->goRoom($fromRoom, $toRoom);
-        $messageBtn = $this->gameButtons->getMenu(new $this->gameButtons->buttonsState($this->gameButtons));
+        $this->saveGame();
 
         return [$message, $messageBtn];
     }
 
     protected function saveGame() {
-        return $this->gameSession->saveSession($this->userId, [
+        return $this->user->gameSession->saveSession($this->user->id, [
             'player' => $this->player,
             'map' => $this->map,
             'buttonsState' => $this->gameButtons->buttonsState,
@@ -138,10 +80,17 @@ class GameController extends Controller
     }
 
     protected function loadGame() {
-        $gameInfo = $this->gameSession->loadSession($this->userId);
+        $gameInfo = $this->user->gameSession->loadSession($this->user->id);
         $this->map = $gameInfo['map'];
         $this->player = $gameInfo['player'];
         $this->gameButtons->buttonsState = 'App\Models\Buttons\\'.$gameInfo['buttonsState'];
+    }
+
+    protected function createGame() {
+        $generator = new CaseGenerator();
+        $this->map = $generator->map->generate();
+        $this->player = $generator->player->generate();
+        $this->gameButtons->buttonsState = 'App\Models\Buttons\ActionButtons';
     }
 
 }

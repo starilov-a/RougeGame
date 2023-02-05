@@ -3,24 +3,26 @@
 namespace App\Models\Buttons;
 
 
+use App\Models\GameActions;
+
 class ActionButtons extends ButtonsStates
 {
-    private $nextState = [
-        '/start' => ['state' => 'ActionButtons', 'method' => 'mainMenu'],
-        'Идти' => ['state' => 'MoveButtons', 'method' => 'moveMenu'],
+    static $action = [
+        '/start' => ['state' => 'ActionButtons', 'menuMethod' => 'mainMenu'],
+        'Идти' => ['state' => 'MoveButtons', 'menuMethod' => 'moveMenu', 'actionMethod' => 'roomsNearPlayer'],
         'Атаковать' => 'attackMenu',
         'Говорить' => 'sayMenu',
         'Инвентарь' => 'inventoryMenu',
-        'Исследовать' => ['state' => 'ActionButtons', 'method' => 'mainMenu']
+        'Исследовать' => ['state' => 'ActionButtons', 'menuMethod' => 'mainMenu']
     ];
 
-    public function getMenu($data) {
+    public function getMenu() {
         $message = $this->gameButtons->getMessage();
         //1.передача состояния
-        $this->gameButtons->switchButtonsState($this->nextState[$message]['state']);
+        $this->gameButtons->switchButtonsState(self::$action[$message]['state']);
         //2.получение кнопок
-        $methodName = $this->nextState[$message]['method'];
-
+        $data = $this->getData();
+        $methodName = self::$action[$message]['menuMethod'];
         if($data !== false) {
             return $this->buttons->$methodName($data);
         } else {
@@ -33,5 +35,14 @@ class ActionButtons extends ButtonsStates
         $this->gameButtons->switchButtonsState('ActionButtons');
         //2.получение кнопок
         return $this->buttons->mainMenu();
+    }
+
+    protected function getData() {
+        if (isset(self::$action[$this->gameButtons->getMessage()]['actionMethod'])) {
+            $gameActions = new GameActions($this->gameController);
+            $gameMethod = self::$action[$this->gameButtons->getMessage()]['actionMethod'];
+            return $gameActions->$gameMethod();
+        }
+        return false;
     }
 }

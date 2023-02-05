@@ -2,32 +2,33 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Telegram\Telegram;
+use App\Models\GameButtons,
+    App\Models\Telegram\Telegram,
+    App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 class WebhookController extends Controller
 {
-    public function index(Request $request, GameController $gameController, Telegram $telegram) {
-        $content = $request->getContent();
-        //response('Hello World', 200);exit;
-        $json = json_decode($content);
+    public function index(Request $request, Telegram $telegram) {
+        $json = json_decode($request->getContent());
 
 
         $userMessage = '';
+        $userId = '';
         if (isset($json->message)) {
             $userId = $json->message->from->id;
             $userMessage = $json->message->text;
         }
-
-        $gameController->setMessage($userMessage);
-        $gameController->setUserId($userId);
-
-
+        //$telegram->sendMessage($userId, '2020');exit;
+        $gameController = new GameController(new GameButtons($userMessage), new User($userId, $userMessage));
 
         //получение кнопок
         $message = '';
-        list($message, $messageBtn) = isset($gameController->commands[$userMessage]) ? $gameController->staticAction() : $gameController->customAction();
+        $messageBtn = [];
+        list($message, $messageBtn) = in_array($userMessage, $gameController->commands) ?
+            $gameController->staticCommand() :
+            $gameController->customCommand();
 
         $telegram->sendMessage($userId, $message, $messageBtn);
     }

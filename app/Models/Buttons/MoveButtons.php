@@ -5,7 +5,9 @@ namespace App\Models\Buttons;
 
 class MoveButtons extends ButtonsStates
 {
-    public function getMenu($data) {
+    static $action = 'goRoom';
+
+    public function getMenu() {
         $message = $this->gameButtons->getMessage();
         if($message == 'Назад') {
             return $this->buttons->mainMenu();

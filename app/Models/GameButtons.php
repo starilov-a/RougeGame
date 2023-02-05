@@ -9,15 +9,15 @@ class GameButtons
     protected $lastButtonsState = '';
     protected $message = '';
 
-    public function getMenu($buttonsState, $data = false) {
+    public function __construct($message) {
+        $this->message = $message;
+    }
+
+    public function getMenu($buttonsState) {
         if ($this->message == 'Назад') {
             return $buttonsState->returnMenu();
         }
-        return $buttonsState->getMenu($data);
-    }
-
-    public function setMessage ($message) {
-        $this->message = $message;
+        return $buttonsState->getMenu();
     }
 
     public function getMessage() {

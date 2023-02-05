@@ -21,9 +21,6 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind('App\Model\GameSession', function($app){
             return new GameSession;
         });
-        $this->app->bind('App\Http\Controllers\GameController', function($app){
-            return new GameController(new GameSession, new GameButtons);
-        });
         $this->app->bind('App\Models\Telegram\Telegram', function($app){
             return new Telegram(new Http(), config('bot.apikey'));
         });

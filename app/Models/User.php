@@ -43,9 +43,13 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    //public function gameSession
-    public function gameSession()
-    {
-        return $this->hasOne(GameSession::class);
+    public $id;
+    public $message;
+    public $gameSession;
+
+    public function __construct($id, $message) {
+        $this->id = $id;
+        $this->message = $message;
+        $this->gameSession = new GameSession();
     }
 }

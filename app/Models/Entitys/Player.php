@@ -35,7 +35,7 @@ class Player implements PlayerInterface
         $this->currentRoom = $toRoom->id;
         $toRoom->playerVisited();
 
-        return 'Вы вошли в комнату '.$toRoom->getTitle();
+        return $toRoom->getTitle();
     }
 
     public function goFloor()

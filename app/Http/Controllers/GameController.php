@@ -60,6 +60,8 @@ class GameController extends Controller
             case('App\Models\Buttons\MoveButtons'):
                 $messageResponse = $this->goRoom();
                 break;
+            default:
+                $messageResponse = 'Error';
         }
         $this->saveGame();
 

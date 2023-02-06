@@ -5,8 +5,7 @@ namespace App\Models;
 
 class GameButtons
 {
-    public $buttonsState = 'ActionButtons';
-    protected $lastButtonsState = '';
+    public $buttonsState = 'MainMenuButtons';
     protected $message = '';
 
     public function __construct($message) {
@@ -18,6 +17,10 @@ class GameButtons
             return $buttonsState->returnMenu();
         }
         return $buttonsState->getMenu();
+    }
+
+    public function playerAction($buttonsState) {
+        return $buttonsState->playerAction();
     }
 
     public function getMessage() {

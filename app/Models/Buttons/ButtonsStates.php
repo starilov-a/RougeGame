@@ -20,4 +20,12 @@ abstract class ButtonsStates
     abstract public function getMenu();
 
     abstract public function returnMenu();
+
+    public function playerAction() {
+        return false;
+    }
+
+    protected function getGameData() {
+        return false;
+    }
 }

@@ -8,20 +8,22 @@ class MoveButtons extends ButtonsStates
     static $action = 'goRoom';
 
     public function getMenu() {
-        $message = $this->gameButtons->getMessage();
-        if($message == 'Назад') {
-            return $this->buttons->mainMenu();
-        }
         //1.передача состояния
-        $this->gameButtons->switchButtonsState('ActionButtons');
+        $this->gameButtons->switchButtonsState('MainMenuButtons');
         //2.получение кнопок
         return $this->buttons->mainMenu();
     }
 
     public function returnMenu() {
         //1.передача состояния
-        $this->gameButtons->switchButtonsState('ActionButtons');
+        $this->gameButtons->switchButtonsState('MainMenuButtons');
         //2.получение кнопок
         return $this->buttons->mainMenu();
+    }
+
+    public function playerAction() {
+        $message = $this->gameButtons->getMessage();
+        $methodName = self::$action[$message]['menuMethod'];
+        return $this->gameController->playerActions->$methodName($message);
     }
 }

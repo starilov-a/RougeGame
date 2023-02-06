@@ -4,8 +4,6 @@ namespace App\Models;
 
 use App\Exceptions\GeneralTelegramExeption;
 use App\Http\Controllers\GameController;
-use App\Models\Entitys\Player;
-use App\Models\Map\Map;
 use Illuminate\Support\Facades\Log;
 
 class GameActions
@@ -17,7 +15,6 @@ class GameActions
     }
 
     public function roomsNearPlayer() {
-        $rooms = $this->gameController->map->getFloor($this->gameController->player->getLvl())->getNearRoom($this->gameController->player);
-        return $rooms;
+        return $this->gameController->map->getFloor($this->gameController->player->getLvl())->getNearRoom($this->gameController->player);
     }
 }

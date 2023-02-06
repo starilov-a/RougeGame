@@ -13,7 +13,6 @@ class WebhookController extends Controller
     public function index(Request $request, Telegram $telegram) {
         $json = json_decode($request->getContent());
 
-
         $userMessage = '';
         $userId = '';
         if (isset($json->message)) {
@@ -26,9 +25,7 @@ class WebhookController extends Controller
         //получение кнопок
         $message = '';
         $messageBtn = [];
-        list($message, $messageBtn) = in_array($userMessage, $gameController->commands) ?
-            $gameController->staticCommand() :
-            $gameController->customCommand();
+        list($message, $messageBtn) = $gameController->pushButton();
 
         $telegram->sendMessage($userId, $message, $messageBtn);
     }

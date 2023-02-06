@@ -9,7 +9,7 @@ class MainMenuButtons extends ButtonsStates
 {
     static $action = [
         '/start' => ['state' => 'MainMenuButtons', 'menuMethod' => 'mainMenu'],
-        'Идти' => ['state' => 'MoveButtons', 'menuMethod' => 'moveMenu', 'gameAction' => 'roomsNearPlayer'],
+        'Идти' => ['state' => 'MoveButtons', 'menuMethod' => 'moveMenu', 'gameMethod' => 'roomsNearPlayer'],
         'Атаковать' => 'attackMenu',
         'Говорить' => 'sayMenu',
         'Инвентарь' => 'inventoryMenu',
@@ -38,15 +38,18 @@ class MainMenuButtons extends ButtonsStates
     }
 
     protected function getGameData() {
-        if (isset(self::$action[$this->gameButtons->getMessage()]['gameAction'])) {
-            $gameMethod = self::$action[$this->gameButtons->getMessage()]['gameAction'];
-            return $this->gameController->gameActions->$gameMethod();
+        if (isset(self::$action[$this->gameButtons->getMessage()]['gameMethod'])) {
+            $gameMethod = self::$action[$this->gameButtons->getMessage()]['gameMethod'];
+            return $this->gameActions->$gameMethod();
         }
         return false;
     }
 
     public function playerAction() {
-        $methodName = self::$action[$this->gameButtons->getMessage()]['menuMethod'];
-        return $this->gameController->playerActions->$methodName();
+        if (isset(self::$action[$this->gameButtons->getMessage()]['playerMethod'])){
+            $methodName = self::$action[$this->gameButtons->getMessage()]['playerMethod'];
+            return $this->playerActions->$methodName();
+        }
+        return false;
     }
 }

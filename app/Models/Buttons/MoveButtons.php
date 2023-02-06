@@ -22,8 +22,7 @@ class MoveButtons extends ButtonsStates
     }
 
     public function playerAction() {
-        $message = $this->gameButtons->getMessage();
-        $methodName = self::$action[$message]['menuMethod'];
-        return $this->gameController->playerActions->$methodName($message);
+        $methodName = self::$action;
+        return $this->playerActions->$methodName($this->gameButtons->getMessage());
     }
 }

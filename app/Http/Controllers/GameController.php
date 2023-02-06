@@ -15,10 +15,7 @@ use Illuminate\Support\Facades\Log;
 class GameController extends Controller
 {
     protected $user;
-    protected $buttonState;
     public $gameButtons;
-    public $gameActions;
-    public $playerActions;
 
     public Player $player;
     public Map $map;
@@ -26,29 +23,30 @@ class GameController extends Controller
     public function __construct(GameButtons $gameButtons, User $user){
         $this->gameButtons = $gameButtons;
         $this->user = $user;
-        $this->gameActions = new GameActions($this);
-        $this->playerActions = new PlayerActions($this);
-        $this->buttonState = new $this->gameButtons->buttonsState($this->gameButtons, $this);
+
     }
 
-    //Для заранее заготовленных команд
     public function pushButton() {
         //Исключениее для новой игры
         //TODO найти другое решение
         if ($this->user->message == '/start') {
             $this->createGame();
             $message = 'Создана новая игра!';
-            $messageBtn = $this->gameButtons->getMenu($this->buttonState);
+            $messageBtn = $this->gameButtons->getMenu(new $this->gameButtons->buttonsState($this->gameButtons, $this));
+            $this->saveGame();
             return [$message, $messageBtn];
         }
         //Загрузка
         $this->loadGame();
+        $buttonState = new $this->gameButtons->buttonsState($this->gameButtons, $this);
         //Событие
-        $playerActionRes = $this->gameButtons->playerAction($this->buttonState);
+        $playerActionRes = '';
+        if ($this->user->message != 'Назад')
+            $playerActionRes = $this->gameButtons->playerAction($buttonState);
         //Получение сообщения - добавить функционал получения сообщений
         $message = 'Клик: ' . $playerActionRes;
         //Получение кнопки
-        $messageBtn = $this->gameButtons->getMenu($this->buttonState);
+        $messageBtn = $this->gameButtons->getMenu($buttonState);
 
         $this->saveGame();
         return [$message, $messageBtn];

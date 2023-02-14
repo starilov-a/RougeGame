@@ -5,22 +5,23 @@ namespace App\Models;
 
 class GameButtons
 {
-    public $buttonsState = 'MainMenuButtons';
+    public $stateString = 'MainMenuButtons';
+    public $state;
     protected $message = '';
 
     public function __construct($message) {
         $this->message = $message;
     }
 
-    public function getMenu($buttonsState) {
+    public function getMenu() {
         if ($this->message == 'Назад') {
-            return $buttonsState->returnMenu();
+            return $this->state->returnMenu();
         }
-        return $buttonsState->getMenu();
+        return $this->state->getMenu();
     }
 
-    public function playerAction($buttonsState) {
-        return $buttonsState->playerAction();
+    public function playerAction() {
+        return $this->state->playerAction();
     }
 
     public function getMessage() {
@@ -28,8 +29,7 @@ class GameButtons
     }
 
     public function switchButtonsState($newState) {
-        $this->lastButtonsState = $this->buttonsState;
-        $this->buttonsState = $newState;
+        $this->stateString = $newState;
     }
 
 }

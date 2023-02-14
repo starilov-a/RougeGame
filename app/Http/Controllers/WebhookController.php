@@ -25,7 +25,7 @@ class WebhookController extends Controller
         //получение кнопок
         $message = '';
         $messageBtn = [];
-        list($message, $messageBtn) = $gameController->pushButton();
+        list($message, $messageBtn) = $gameController->index();
 
         $telegram->sendMessage($userId, $message, $messageBtn);
     }

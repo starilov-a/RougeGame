@@ -26,37 +26,45 @@ class GameController extends Controller
 
     }
 
-    public function pushButton() {
+    public function index() {
         //Исключениее для новой игры
         //TODO найти другое решение
         if ($this->user->message == '/start') {
             $this->createGame();
             $message = 'Создана новая игра!';
-            $messageBtn = $this->gameButtons->getMenu(new $this->gameButtons->buttonsState($this->gameButtons, $this));
+            $messageBtn = $this->gameButtons->getMenu();
             $this->saveGame();
             return [$message, $messageBtn];
         }
-        //Загрузка
+
         $this->loadGame();
-        $buttonState = new $this->gameButtons->buttonsState($this->gameButtons, $this);
-        //Событие
-        $playerActionRes = '';
-        if ($this->user->message != 'Назад')
-            $playerActionRes = $this->gameButtons->playerAction($buttonState);
+        $playerActionMsg = $this->playerAction();
+        $worldMsg = $this->worldTic();
+
         //Получение сообщения - добавить функционал получения сообщений
-        $message = 'Клик: ' . $playerActionRes;
+        $message = $playerActionMsg . $worldMsg;
         //Получение кнопки
-        $messageBtn = $this->gameButtons->getMenu($buttonState);
+        $messageBtn = $this->gameButtons->getMenu();
 
         $this->saveGame();
         return [$message, $messageBtn];
+    }
+
+    protected function playerAction() {
+        if ($this->user->message != 'Назад')
+            return $this->gameButtons->playerAction();
+        return '';
+    }
+
+    protected function worldTic() {
+
     }
 
     protected function saveGame() {
         return $this->user->gameSession->saveSession($this->user->id, [
             'player' => $this->player,
             'map' => $this->map,
-            'buttonsState' => $this->gameButtons->buttonsState,
+            'buttonsState' => $this->gameButtons->stateString,
         ]);
     }
 
@@ -64,7 +72,8 @@ class GameController extends Controller
         $gameInfo = $this->user->gameSession->loadSession($this->user->id);
         $this->map = $gameInfo['map'];
         $this->player = $gameInfo['player'];
-        $this->gameButtons->buttonsState = 'App\Models\Buttons\\'.$gameInfo['buttonsState'];
+        $buttinStateNamespace = 'App\Models\Buttons\\'.$gameInfo['buttonsState'];
+        $this->gameButtons->state = new $buttinStateNamespace($this->gameButtons, $this);
     }
 
     protected function createGame() {

@@ -13,7 +13,7 @@ class GeneratorMap extends Model implements GeneratorInterface
 {
     private $seed;
     private $countLvls = 1;
-    private $sizeFoor = ['height' => 4, 'weight' => 4];
+    private $sizeFoor = ['height' => 5, 'weight' => 5];
     private $rooms;
     private $floors;
 

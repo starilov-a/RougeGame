@@ -23,4 +23,8 @@ class Map implements ViewInterface
     public function getFloor($lvl) {
         return $this->floors[$lvl];
     }
+
+    public function getRoomsNearPlayer($player) {
+        return $this->getFloor($player->getLvl())->getNearRoom($player);
+    }
 }

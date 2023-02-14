@@ -18,10 +18,7 @@ class PlayerActions
     }
 
     public function checkMap() {
-        $message = "Вы раскрыли карту\r\n\r\n";
-        $message .= $this->map->getView();
-
-        return $message;
+        return $this->map->getView();
     }
 
     public function goRoom($titleRoom) {

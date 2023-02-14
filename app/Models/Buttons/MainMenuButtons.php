@@ -9,11 +9,11 @@ class MainMenuButtons extends ButtonsStates
 {
     static $action = [
         '/start' => ['state' => 'MainMenuButtons', 'menuMethod' => 'mainMenu'],
-        'Идти' => ['state' => 'MoveButtons', 'menuMethod' => 'moveMenu', 'gameMethod' => 'roomsNearPlayer'],
+        'Идти' => ['state' => 'MoveButtons', 'menuMethod' => 'moveMenu', 'gameMethod' => 'roomsNearPlayer', 'wordMethod' => 'whereGo'],
         'Атаковать' => 'attackMenu',
         'Говорить' => 'sayMenu',
         'Инвентарь' => 'inventoryMenu',
-        'Исследовать' => ['state' => 'MainMenuButtons', 'menuMethod' => 'mainMenu', 'playerMethod' => 'checkMap']
+        'Исследовать' => ['state' => 'MainMenuButtons', 'menuMethod' => 'mainMenu', 'playerMethod' => 'checkMap', 'wordMethod' => 'viewMap']
     ];
 
     public function getMenu() {
@@ -48,7 +48,12 @@ class MainMenuButtons extends ButtonsStates
     public function playerAction() {
         if (isset(self::$action[$this->gameButtons->getMessage()]['playerMethod'])){
             $methodName = self::$action[$this->gameButtons->getMessage()]['playerMethod'];
-            return $this->playerActions->$methodName();
+            $text = '';
+            if (isset(self::$action[$this->gameButtons->getMessage()]['wordMethod'])) {
+                $wordMethod = self::$action[$this->gameButtons->getMessage()]['wordMethod'];
+                $text =  $this->words->$wordMethod();
+            }
+            return $text . $this->playerActions->$methodName();
         }
         return false;
     }

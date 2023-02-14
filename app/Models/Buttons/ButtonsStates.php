@@ -6,19 +6,20 @@ namespace App\Models\Buttons;
 //реализация шаблона Состояние
 use App\Models\GameActions;
 use App\Models\PlayerActions;
+use App\Models\Words\Words;
 
 abstract class ButtonsStates
 {
     public static $action;
     protected $gameButtons;
     protected $buttons;
-    protected $gameActions;
+    protected $words;
     protected $playerActions;
 
     public function __construct($gameButtons, $gameController) {
         $this->gameButtons = $gameButtons;
         $this->buttons = new Buttons();
-        $this->gameActions = new GameActions($gameController);
+        $this->words = new Words();
         $this->playerActions = new PlayerActions($gameController);
     }
 

@@ -3,6 +3,7 @@
 namespace App\Models\Entitys;
 
 use App\Models\Interfaces\PlayerInterface;
+use Illuminate\Support\Facades\Log;
 
 class Player implements PlayerInterface
 {

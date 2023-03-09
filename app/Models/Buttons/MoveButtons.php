@@ -3,6 +3,8 @@
 namespace App\Models\Buttons;
 
 
+use Illuminate\Support\Facades\Log;
+
 class MoveButtons extends ButtonsStates
 {
     static $action = 'goRoom';

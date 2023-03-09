@@ -4,22 +4,23 @@ namespace App\Models\Buttons;
 
 
 use App\Models\GameActions;
+use Illuminate\Support\Facades\Log;
 
 class MainMenuButtons extends ButtonsStates
 {
     static $action = [
-        '/start' => ['state' => 'MainMenuButtons', 'menuMethod' => 'mainMenu'],
-        'Идти' => ['state' => 'MoveButtons', 'menuMethod' => 'moveMenu', 'gameMethod' => 'roomsNearPlayer', 'wordMethod' => 'whereGo'],
+        '/start' => ['nextState' => 'MainMenuButtons', 'menuMethod' => 'mainMenu'],
+        'Идти' => ['nextState' => 'MoveButtons', 'menuMethod' => 'moveMenu', 'gameMethod' => 'roomsNearPlayer', 'wordMethod' => 'whereGo'],
         'Атаковать' => 'attackMenu',
         'Говорить' => 'sayMenu',
         'Инвентарь' => 'inventoryMenu',
-        'Исследовать' => ['state' => 'MainMenuButtons', 'menuMethod' => 'mainMenu', 'playerMethod' => 'checkMap', 'wordMethod' => 'viewMap']
+        'Исследовать' => ['nextState' => 'MainMenuButtons', 'menuMethod' => 'mainMenu', 'playerMethod' => 'checkMap', 'wordMethod' => 'viewMap']
     ];
 
     public function getMenu() {
         $message = $this->gameButtons->getMessage();
         //1.передача состояния
-        $this->gameButtons->switchButtonsState(self::$action[$message]['state']);
+        $this->gameButtons->switchButtonsState(self::$action[$message]['nextState']);
         //2.получение кнопок
         $data = $this->getGameData();
         $methodName = self::$action[$message]['menuMethod'];
@@ -46,15 +47,18 @@ class MainMenuButtons extends ButtonsStates
     }
 
     public function playerAction() {
+        $text = '';
+
+        if (isset(self::$action[$this->gameButtons->getMessage()]['wordMethod'])) {
+            $wordMethod = self::$action[$this->gameButtons->getMessage()]['wordMethod'];
+            $text .= $this->words->$wordMethod();
+        }
+
         if (isset(self::$action[$this->gameButtons->getMessage()]['playerMethod'])){
             $methodName = self::$action[$this->gameButtons->getMessage()]['playerMethod'];
-            $text = '';
-            if (isset(self::$action[$this->gameButtons->getMessage()]['wordMethod'])) {
-                $wordMethod = self::$action[$this->gameButtons->getMessage()]['wordMethod'];
-                $text =  $this->words->$wordMethod();
-            }
-            return $text . $this->playerActions->$methodName();
+            $text .= $this->playerActions->$methodName();
         }
-        return false;
+
+        return $text;
     }
 }

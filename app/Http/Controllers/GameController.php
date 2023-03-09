@@ -53,7 +53,7 @@ class GameController extends Controller
     protected function playerAction() {
         if ($this->user->message != 'Назад')
             return $this->gameButtons->playerAction();
-        return '';
+        return 'Назад';
     }
 
     protected function worldTic() {
@@ -72,7 +72,7 @@ class GameController extends Controller
         $gameInfo = $this->user->gameSession->loadSession($this->user->id);
         $this->map = $gameInfo['map'];
         $this->player = $gameInfo['player'];
-        $buttinStateNamespace = 'App\Models\Buttons\\'.$gameInfo['buttonsState'];
+        $buttinStateNamespace = '\App\Models\Buttons\\'.$gameInfo['buttonsState'];
         $this->gameButtons->state = new $buttinStateNamespace($this->gameButtons, $this);
     }
 
@@ -80,6 +80,6 @@ class GameController extends Controller
         $generator = new CaseGenerator();
         $this->map = $generator->map->generate();
         $this->player = $generator->player->generate();
-        $this->gameButtons->buttonsState = 'App\Models\Buttons\MainMenuButtons';
+        $this->gameButtons->state = new \App\Models\Buttons\MainMenuButtons($this->gameButtons, $this);
     }
 }

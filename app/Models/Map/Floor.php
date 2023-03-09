@@ -3,6 +3,8 @@
 namespace App\Models\Map;
 
 
+use Illuminate\Support\Facades\Log;
+
 class Floor implements ViewInterface
 {
     protected $lvl;
@@ -56,13 +58,14 @@ class Floor implements ViewInterface
             foreach ($itemsY as $y => $idRoom) {
                 if(!empty($idRoom) || $idRoom === 0){
                     //установка соседей
-                    if(!empty($map[$x+1][$y]))
+                    Log::debug($map);
+                    if(isset($map[$x+1][$y]))
                         $this->rooms[$map[$x][$y]]->setNeighbour($this->rooms[$map[$x+1][$y]]);
-                    if(!empty($map[$x][$y+1]))
+                    if(isset($map[$x][$y+1]))
                         $this->rooms[$map[$x][$y]]->setNeighbour($this->rooms[$map[$x][$y+1]]);
-                    if(!empty($map[$x-1][$y]))
+                    if(isset($map[$x-1][$y]))
                         $this->rooms[$map[$x][$y]]->setNeighbour($this->rooms[$map[$x-1][$y]]);
-                    if(!empty($map[$x][$y-1]))
+                    if(isset($map[$x][$y-1]))
                         $this->rooms[$map[$x][$y]]->setNeighbour($this->rooms[$map[$x][$y-1]]);
                 }
             }

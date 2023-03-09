@@ -3,6 +3,7 @@
 namespace App\Models\Map;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 
 class Room extends Model implements ViewInterface
 {

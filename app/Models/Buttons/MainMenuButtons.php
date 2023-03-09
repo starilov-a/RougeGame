@@ -23,11 +23,11 @@ class MainMenuButtons extends ButtonsStates
         $this->gameButtons->switchButtonsState(self::$action[$message]['nextState']);
         //2.получение кнопок
         $data = $this->getGameData();
-        $methodName = self::$action[$message]['menuMethod'];
+        $menuMethod = self::$action[$message]['menuMethod'];
         if($data !== false) {
-            return $this->buttons->$methodName($data);
+            return $this->buttons->$menuMethod($data);
         } else {
-            return $this->buttons->$methodName();
+            return $this->buttons->$menuMethod();
         }
     }
 

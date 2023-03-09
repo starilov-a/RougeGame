@@ -3,6 +3,8 @@
 namespace App\Models\Buttons;
 
 
+use Illuminate\Support\Facades\Log;
+
 class Buttons
 {
     public function mainMenu() {

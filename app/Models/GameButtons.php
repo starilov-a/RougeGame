@@ -15,7 +15,7 @@ class GameButtons
 
     public function getMenu() {
         if ($this->message == 'Назад') {
-            return $this->state->returnMenu();
+            return $this->state->lastMenu();
         }
         return $this->state->getMenu();
     }

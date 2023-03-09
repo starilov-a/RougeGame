@@ -27,7 +27,7 @@ abstract class ButtonsStates
 
     abstract public function getMenu();
 
-    abstract public function returnMenu();
+    abstract public function lastMenu();
 
     public function playerAction() {
         return false;

@@ -16,7 +16,7 @@ class MoveButtons extends ButtonsStates
         return $this->buttons->mainMenu();
     }
 
-    public function returnMenu() {
+    public function lastMenu() {
         //1.передача состояния
         $this->gameButtons->switchButtonsState('MainMenuButtons');
         //2.получение кнопок
